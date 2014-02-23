@@ -78,6 +78,35 @@ module.exports = function(grunt) {
             });
 
             return messages;
+        },
+
+        wordpress: function(file, options) {
+             var contents = grunt.file.read(file).replace("\n", " ")
+                .replace(/"\s*\+\s*"/g, "")
+                .replace(/'\s*\+\s*'/g, "");
+
+            var fn = _.flatten([ options.functionName ]);
+
+            var messages = {}, result;
+
+            var extractStrings = function(quote, fn) {
+                var regex = new RegExp("(?:[^\\w]|^)" + fn + "\\s*\\(\\s*((?:" +
+                    quote + "(?:[^" + quote + "\\\\]|\\\\.)+" + quote +
+                    "\\s*[,)]\\s*)+)", "g");
+                var quoteRegex = new RegExp("\\\\" + quote, "g");
+
+                while ((result = regex.exec(contents)) !== null) {
+                    var subRE = new RegExp(quote + "((?:[^" + quote + "\\\\]|\\\\.)+)" + quote);
+                    messages[options.processMessage(subRE.exec(result[1])[1])] = "";
+                }
+            }
+
+            _.each( fn, function( func ) {
+                extractStrings("'", func );
+                extractStrings('"', func );
+            });
+
+            return messages;
         }
     };
 

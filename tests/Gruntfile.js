@@ -20,7 +20,8 @@ module.exports = function(grunt) {
 
                 files: {
                     handlebars: ["assets/*.handlebars"],
-                    javascript: ["assets/*.js"]
+                    javascript: ["assets/*.js"],
+                    wordpress:  ["assets/*.wordpress.php"]
                 }
             }
         }
